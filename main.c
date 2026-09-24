@@ -221,6 +221,22 @@ void displayAnalytics() {
     }
 }
 
+// System Status Overview (New Feature)
+void displaySystemStatus() {
+    printHeader("SYSTEM OVERVIEW REPORT");
+    printf("Total Registered Patients : %d\n", patientCount);
+
+    int wardAllocatedCount = 0;
+    int criticalCount = 0;
+    for (int i = 0; i < patientCount; i++) {
+        if (assignedWards[i] != -1) wardAllocatedCount++;
+        if (urgencyLevels[i] == 3) criticalCount++;
+    }
+
+    printf("Active Ward Admissions    : %d\n", wardAllocatedCount);
+    printf("Critical Priority Cases  : %d\n", criticalCount);
+}
+
 int main() {
     int choice;
     do {
@@ -231,7 +247,8 @@ int main() {
         printf("4. Generate Patient Bill\n");
         printf("5. View Triage Queue\n");
         printf("6. View Analytics Summary\n");
-        printf("7. Exit\n");
+        printf("7. System Status Overview\n");
+        printf("8. Exit\n");
         printf("Enter Choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("[ERROR] Invalid input! Exiting program.\n");
@@ -244,8 +261,9 @@ int main() {
         else if (choice == 4) generateBill();
         else if (choice == 5) displayTriageQueue();
         else if (choice == 6) displayAnalytics();
+        else if (choice == 7) displaySystemStatus();
 
-    } while(choice != 7);
+    } while(choice != 8);
 
     printf("\nExiting System. Thank you!\n");
     return 0;
