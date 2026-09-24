@@ -247,6 +247,15 @@ void displaySystemStatus() {
     printf("Critical Priority Cases  : %d\n", criticalCount);
 }
 
+// Emergency & Support Contact Information (New Feature)
+void displayContactInfo() {
+    printHeader("HOSPITAL HELPLINE & EMERGENCY CONTACTS");
+    printf("Emergency Hot-line : 1990 (24/7 Service)\n");
+    printf("Hospital Reception : +94 11 2345678\n");
+    printf("Ambulance Support  : +94 11 8765432\n");
+    printf("Email Query Desk   : help@smarthospital.lk\n");
+}
+
 // System Entry point
 int main() {
     int choice;
@@ -259,7 +268,8 @@ int main() {
         printf("5. View Triage Queue\n");
         printf("6. View Analytics Summary\n");
         printf("7. System Status Overview\n");
-        printf("8. Exit\n");
+        printf("8. Emergency & Help Contacts\n");
+        printf("9. Exit\n");
         printf("Enter Choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("[ERROR] Invalid input! Exiting program.\n");
@@ -273,8 +283,9 @@ int main() {
         else if (choice == 5) displayTriageQueue();
         else if (choice == 6) displayAnalytics();
         else if (choice == 7) displaySystemStatus();
+        else if (choice == 8) displayContactInfo();
 
-    } while(choice != 8);
+    } while(choice != 9);
 
     printf("\nExiting System. Thank you!\n");
     return 0;
