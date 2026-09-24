@@ -5,7 +5,7 @@
 #define NUM_SPECIALTIES 4
 #define NUM_WARDS 4
 
-// Requirement 1: Constants
+// Global System Configuration Constants
 const char SPECIALTIES[NUM_SPECIALTIES][30] = {"General Practice", "Paediatrics", "Cardiology", "Neurology"};
 const float BASE_FEES[NUM_SPECIALTIES] = {1500.0, 2500.0, 4500.0, 5000.0};
 const int AVG_TIMES[NUM_SPECIALTIES] = {15, 20, 30, 30};
@@ -13,7 +13,7 @@ const int AVG_TIMES[NUM_SPECIALTIES] = {15, 20, 30, 30};
 const char WARDS[NUM_WARDS][20] = {"General Ward", "Paediatric Ward", "Surgical Ward", "ICU"};
 const float WARD_RATES[NUM_WARDS] = {3000.0, 6000.0, 12000.0, 25000.0};
 
-// Requirement 1: Parallel Arrays
+// Parallel Data Storage Arrays
 char patientNames[MAX_PATIENTS][50];
 int patientAges[MAX_PATIENTS];
 int urgencyLevels[MAX_PATIENTS];
@@ -22,14 +22,19 @@ int assignedWards[MAX_PATIENTS];
 int stayDays[MAX_PATIENTS];
 int patientCount = 0;
 
-// UI Header Helper Function
+// Helper function to clear standard input stream
+void clearBuffer() {
+    while (getchar() != '\n');
+}
+
+// Custom UI Section Header Formatter
 void printHeader(const char* title) {
     printf("\n========================================\n");
     printf("   %s\n", title);
     printf("========================================\n");
 }
 
-// Requirement 2: Patient Registration
+// Requirement 2: Patient Intake and Form Processing
 void registerPatient() {
     if (patientCount >= MAX_PATIENTS) {
         printf("\n[ERROR] Hospital capacity reached!\n");
@@ -43,29 +48,29 @@ void registerPatient() {
     printf("Enter Age: ");
     while (scanf("%d", &patientAges[patientCount]) != 1 || patientAges[patientCount] <= 0) {
         printf("Invalid age! Please enter a valid age: ");
-        while(getchar() != '\n');
+        clearBuffer();
     }
 
     printf("Enter Urgency Level (1=Normal, 2=Urgent, 3=Critical): ");
     while (scanf("%d", &urgencyLevels[patientCount]) != 1 || urgencyLevels[patientCount] < 1 || urgencyLevels[patientCount] > 3) {
         printf("Invalid level! Enter 1, 2, or 3: ");
-        while(getchar() != '\n');
+        clearBuffer();
     }
 
     printf("Select Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     while (scanf("%d", &selectedSpecialties[patientCount]) != 1 || selectedSpecialties[patientCount] < 1 || selectedSpecialties[patientCount] > NUM_SPECIALTIES) {
         printf("Invalid choice! Enter between 1 and %d: ", NUM_SPECIALTIES);
-        while(getchar() != '\n');
+        clearBuffer();
     }
 
-    assignedWards[patientCount] = -1;
+    assignedWards[patientCount] = -1; // Default: No ward assigned
     stayDays[patientCount] = 0;
 
     printf("\n[SUCCESS] Patient %s Registered Successfully! Assigned ID: %d\n", patientNames[patientCount], patientCount);
     patientCount++;
 }
 
-// Search Patient Feature
+// Search Subroutine by Patient Substring Match
 void searchPatient() {
     if (patientCount == 0) {
         printf("\n[INFO] No patients registered yet!\n");
@@ -92,7 +97,7 @@ void searchPatient() {
     }
 }
 
-// Requirement 6: Ward Bed Allocation Engine
+// Requirement 6: Ward Bed Allocation Core Module
 void allocateWard() {
     if (patientCount == 0) {
         printf("\n[INFO] No patients registered yet!\n");
@@ -115,7 +120,7 @@ void allocateWard() {
     }
     printf("Enter Ward Choice (1-%d): ", NUM_WARDS);
     scanf("%d", &assignedWards[id]);
-    assignedWards[id] -= 1;
+    assignedWards[id] -= 1; // Array Index Shift
 
     printf("Enter Number of Days for Stay: ");
     scanf("%d", &stayDays[id]);
@@ -124,7 +129,7 @@ void allocateWard() {
            WARDS[assignedWards[id]], patientNames[id], stayDays[id]);
 }
 
-// Requirement 3 & 6: Billing & Discount Engine
+// Requirement 3 & 6: Automated Invoice Generation Logic
 void generateBill() {
     if (patientCount == 0) {
         printf("\n[INFO] No patients registered yet!\n");
@@ -145,6 +150,7 @@ void generateBill() {
     float baseFee = BASE_FEES[specIdx];
     float discount = 0.0;
 
+    // Senior and Pediatric Concession Logic
     if (patientAges[id] >= 60) {
         discount = baseFee * 0.15;
     } else if (patientAges[id] <= 12) {
@@ -179,7 +185,7 @@ void generateBill() {
     printf("=========================================\n");
 }
 
-// Requirement 4: Emergency Triage Display
+// Requirement 4: Priority Queue Sorting Display Engine
 void displayTriageQueue() {
     if (patientCount == 0) {
         printf("\n[INFO] No patients in the queue!\n");
@@ -200,7 +206,7 @@ void displayTriageQueue() {
     }
 }
 
-// Requirement 5: Hospital Analytics
+// Requirement 5: Statistical Analytics Aggregator
 void displayAnalytics() {
     if (patientCount == 0) {
         printf("\n[INFO] No data available for analytics!\n");
@@ -225,7 +231,7 @@ void displayAnalytics() {
     }
 }
 
-// System Status Overview
+// System Status Metrics Reporter
 void displaySystemStatus() {
     printHeader("SYSTEM OVERVIEW REPORT");
     printf("Total Registered Patients : %d\n", patientCount);
@@ -241,6 +247,7 @@ void displaySystemStatus() {
     printf("Critical Priority Cases  : %d\n", criticalCount);
 }
 
+// System Entry point
 int main() {
     int choice;
     do {
