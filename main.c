@@ -18,6 +18,13 @@ int assignedWards[100];
 int stayDays[100];
 int patientCount = 0;
 
+// UI Header Helper Function
+void printHeader(const char* title) {
+    printf("\n========================================\n");
+    printf("   %s\n", title);
+    printf("========================================\n");
+}
+
 // Requirement 2: Patient Registration
 void registerPatient() {
     if (patientCount >= 100) {
@@ -25,7 +32,7 @@ void registerPatient() {
         return;
     }
 
-    printf("\n--- Patient Intake & Registration ---\n");
+    printHeader("PATIENT INTAKE & REGISTRATION");
     printf("Enter Patient Name: ");
     scanf(" %[^\n]s", patientNames[patientCount]);
 
@@ -54,7 +61,7 @@ void registerPatient() {
     patientCount++;
 }
 
-// Search Patient Feature (Refactoring)
+// Search Patient Feature
 void searchPatient() {
     if (patientCount == 0) {
         printf("\n[INFO] No patients registered yet!\n");
@@ -63,7 +70,8 @@ void searchPatient() {
 
     char query[50];
     int found = 0;
-    printf("\nEnter Patient Name to Search: ");
+    printHeader("PATIENT SEARCH");
+    printf("Enter Patient Name to Search: ");
     scanf(" %[^\n]s", query);
 
     printf("\n--- Search Results ---\n");
@@ -87,8 +95,9 @@ void allocateWard() {
         return;
     }
 
+    printHeader("WARD BED ALLOCATION");
     int id;
-    printf("\nEnter Patient ID (0 to %d): ", patientCount - 1);
+    printf("Enter Patient ID (0 to %d): ", patientCount - 1);
     scanf("%d", &id);
 
     if (id < 0 || id >= patientCount) {
@@ -118,8 +127,9 @@ void generateBill() {
         return;
     }
 
+    printHeader("BILLING & INVOICE GENERATION");
     int id;
-    printf("\nEnter Patient ID (0 to %d): ", patientCount - 1);
+    printf("Enter Patient ID (0 to %d): ", patientCount - 1);
     scanf("%d", &id);
 
     if (id < 0 || id >= patientCount) {
@@ -172,7 +182,7 @@ void displayTriageQueue() {
         return;
     }
 
-    printf("\n--- EMERGENCY TRIAGE QUEUE ---\n");
+    printHeader("EMERGENCY TRIAGE QUEUE");
     printf("Priority Order: Level 3 (Critical) -> Level 2 (Urgent) -> Level 1 (Normal)\n\n");
 
     for (int level = 3; level >= 1; level--) {
@@ -193,6 +203,7 @@ void displayAnalytics() {
         return;
     }
 
+    printHeader("HOSPITAL ANALYTICS SUMMARY");
     int specialtyCounts[4] = {0};
     int totalWaitTime = 0;
 
@@ -202,7 +213,6 @@ void displayAnalytics() {
         totalWaitTime += AVG_TIMES[specIdx];
     }
 
-    printf("\n--- HOSPITAL ANALYTICS SUMMARY ---\n");
     printf("Total Patients Registered: %d\n", patientCount);
     printf("Total Estimated Waiting Time: %d mins\n\n", totalWaitTime);
     printf("Patient Volume by Specialty:\n");
@@ -214,7 +224,7 @@ void displayAnalytics() {
 int main() {
     int choice;
     do {
-        printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
+        printHeader("SMART HOSPITAL MANAGEMENT SYSTEM");
         printf("1. Register New Patient\n");
         printf("2. Search Patient Record\n");
         printf("3. Allocate Ward Bed\n");
