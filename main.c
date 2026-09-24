@@ -18,10 +18,10 @@ int assignedWards[100];
 int stayDays[100];
 int patientCount = 0;
 
-// Requirement 2: Patient Registration with Input Validation
+// Requirement 2: Patient Registration
 void registerPatient() {
     if (patientCount >= 100) {
-        printf("\n[ERROR] Hospital capacity reached! Cannot register more patients.\n");
+        printf("\n[ERROR] Hospital capacity reached!\n");
         return;
     }
 
@@ -32,7 +32,7 @@ void registerPatient() {
     printf("Enter Age: ");
     while (scanf("%d", &patientAges[patientCount]) != 1 || patientAges[patientCount] <= 0) {
         printf("Invalid age! Please enter a valid age: ");
-        while(getchar() != '\n'); // clear input buffer
+        while(getchar() != '\n');
     }
 
     printf("Enter Urgency Level (1=Normal, 2=Urgent, 3=Critical): ");
@@ -52,6 +52,32 @@ void registerPatient() {
 
     printf("\n[SUCCESS] Patient %s Registered Successfully! Assigned ID: %d\n", patientNames[patientCount], patientCount);
     patientCount++;
+}
+
+// Search Patient Feature (Refactoring)
+void searchPatient() {
+    if (patientCount == 0) {
+        printf("\n[INFO] No patients registered yet!\n");
+        return;
+    }
+
+    char query[50];
+    int found = 0;
+    printf("\nEnter Patient Name to Search: ");
+    scanf(" %[^\n]s", query);
+
+    printf("\n--- Search Results ---\n");
+    for (int i = 0; i < patientCount; i++) {
+        if (strstr(patientNames[i], query) != NULL) {
+            printf("ID: %d | Name: %s | Age: %d | Specialty: %s\n",
+                   i, patientNames[i], patientAges[i], SPECIALTIES[selectedSpecialties[i] - 1]);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("No matching patient found.\n");
+    }
 }
 
 // Requirement 6: Ward Bed Allocation Engine
@@ -190,11 +216,12 @@ int main() {
     do {
         printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
         printf("1. Register New Patient\n");
-        printf("2. Allocate Ward Bed\n");
-        printf("3. Generate Patient Bill\n");
-        printf("4. View Triage Queue\n");
-        printf("5. View Analytics Summary\n");
-        printf("6. Exit\n");
+        printf("2. Search Patient Record\n");
+        printf("3. Allocate Ward Bed\n");
+        printf("4. Generate Patient Bill\n");
+        printf("5. View Triage Queue\n");
+        printf("6. View Analytics Summary\n");
+        printf("7. Exit\n");
         printf("Enter Choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("[ERROR] Invalid input! Exiting program.\n");
@@ -202,12 +229,13 @@ int main() {
         }
 
         if (choice == 1) registerPatient();
-        else if (choice == 2) allocateWard();
-        else if (choice == 3) generateBill();
-        else if (choice == 4) displayTriageQueue();
-        else if (choice == 5) displayAnalytics();
+        else if (choice == 2) searchPatient();
+        else if (choice == 3) allocateWard();
+        else if (choice == 4) generateBill();
+        else if (choice == 5) displayTriageQueue();
+        else if (choice == 6) displayAnalytics();
 
-    } while(choice != 6);
+    } while(choice != 7);
 
     printf("\nExiting System. Thank you!\n");
     return 0;
