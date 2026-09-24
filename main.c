@@ -262,7 +262,7 @@ void displayContactInfo() {
     printf("Email Query Desk   : help@smarthospital.lk\n");
 }
 
-// Patient Feedback Collection Module (New Feature)
+// Patient Feedback Collection Module
 void collectFeedback() {
     if (feedbackCount >= MAX_FEEDBACKS) {
         printf("\n[INFO] Feedback storage capacity full!\n");
