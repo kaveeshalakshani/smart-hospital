@@ -16,7 +16,7 @@ int urgencyLevels[100];
 int selectedSpecialties[100];
 int patientCount = 0;
 
-// Requirement 2: Patient Registration Function
+// Requirement 2: Patient Registration
 void registerPatient() {
     printf("\n--- Patient Intake & Registration ---\n");
     printf("Enter Patient Name: ");
@@ -33,19 +33,61 @@ void registerPatient() {
     patientCount++;
 }
 
+// Requirement 3: Billing & Discount Engine
+void generateBill() {
+    if (patientCount == 0) {
+        printf("\nNo patients registered yet!\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Patient ID (0 to %d): ", patientCount - 1);
+    scanf("%d", &id);
+
+    if (id < 0 || id >= patientCount) {
+        printf("Invalid Patient ID!\n");
+        return;
+    }
+
+    int specIdx = selectedSpecialties[id] - 1;
+    float baseFee = BASE_FEES[specIdx];
+    float discount = 0.0;
+
+    // Senior Citizen Discount (>= 60 years -> 15%)
+    if (patientAges[id] >= 60) {
+        discount = baseFee * 0.15;
+    }
+    // Child Discount (<= 12 years -> 10%)
+    else if (patientAges[id] <= 12) {
+        discount = baseFee * 0.10;
+    }
+
+    float finalFee = baseFee - discount;
+
+    printf("\n--- INVOICE ---\n");
+    printf("Patient Name: %s\n", patientNames[id]);
+    printf("Specialty: %s\n", SPECIALTIES[specIdx]);
+    printf("Base Consultation Fee: LKR %.2f\n", baseFee);
+    printf("Discount Applied: LKR %.2f\n", discount);
+    printf("Final Payable Amount: LKR %.2f\n", finalFee);
+}
+
 int main() {
     int choice;
     do {
         printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
         printf("1. Register New Patient\n");
-        printf("2. Exit\n");
+        printf("2. Generate Patient Bill\n");
+        printf("3. Exit\n");
         printf("Enter Choice: ");
         scanf("%d", &choice);
 
         if (choice == 1) {
             registerPatient();
+        } else if (choice == 2) {
+            generateBill();
         }
-    } while(choice != 2);
+    } while(choice != 3);
 
     return 0;
 }
