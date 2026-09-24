@@ -1,21 +1,25 @@
 #include <stdio.h>
 #include <string.h>
 
-// Requirement 1: Constants
-const char SPECIALTIES[4][30] = {"General Practice", "Paediatrics", "Cardiology", "Neurology"};
-const float BASE_FEES[4] = {1500.0, 2500.0, 4500.0, 5000.0};
-const int AVG_TIMES[4] = {15, 20, 30, 30};
+#define MAX_PATIENTS 100
+#define NUM_SPECIALTIES 4
+#define NUM_WARDS 4
 
-const char WARDS[4][20] = {"General Ward", "Paediatric Ward", "Surgical Ward", "ICU"};
-const float WARD_RATES[4] = {3000.0, 6000.0, 12000.0, 25000.0};
+// Requirement 1: Constants
+const char SPECIALTIES[NUM_SPECIALTIES][30] = {"General Practice", "Paediatrics", "Cardiology", "Neurology"};
+const float BASE_FEES[NUM_SPECIALTIES] = {1500.0, 2500.0, 4500.0, 5000.0};
+const int AVG_TIMES[NUM_SPECIALTIES] = {15, 20, 30, 30};
+
+const char WARDS[NUM_WARDS][20] = {"General Ward", "Paediatric Ward", "Surgical Ward", "ICU"};
+const float WARD_RATES[NUM_WARDS] = {3000.0, 6000.0, 12000.0, 25000.0};
 
 // Requirement 1: Parallel Arrays
-char patientNames[100][50];
-int patientAges[100];
-int urgencyLevels[100];
-int selectedSpecialties[100];
-int assignedWards[100];
-int stayDays[100];
+char patientNames[MAX_PATIENTS][50];
+int patientAges[MAX_PATIENTS];
+int urgencyLevels[MAX_PATIENTS];
+int selectedSpecialties[MAX_PATIENTS];
+int assignedWards[MAX_PATIENTS];
+int stayDays[MAX_PATIENTS];
 int patientCount = 0;
 
 // UI Header Helper Function
@@ -27,7 +31,7 @@ void printHeader(const char* title) {
 
 // Requirement 2: Patient Registration
 void registerPatient() {
-    if (patientCount >= 100) {
+    if (patientCount >= MAX_PATIENTS) {
         printf("\n[ERROR] Hospital capacity reached!\n");
         return;
     }
@@ -49,8 +53,8 @@ void registerPatient() {
     }
 
     printf("Select Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
-    while (scanf("%d", &selectedSpecialties[patientCount]) != 1 || selectedSpecialties[patientCount] < 1 || selectedSpecialties[patientCount] > 4) {
-        printf("Invalid choice! Enter between 1 and 4: ");
+    while (scanf("%d", &selectedSpecialties[patientCount]) != 1 || selectedSpecialties[patientCount] < 1 || selectedSpecialties[patientCount] > NUM_SPECIALTIES) {
+        printf("Invalid choice! Enter between 1 and %d: ", NUM_SPECIALTIES);
         while(getchar() != '\n');
     }
 
@@ -106,10 +110,10 @@ void allocateWard() {
     }
 
     printf("\nSelect Ward Category:\n");
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_WARDS; i++) {
         printf("%d. %s (LKR %.2f/day)\n", i + 1, WARDS[i], WARD_RATES[i]);
     }
-    printf("Enter Ward Choice (1-4): ");
+    printf("Enter Ward Choice (1-%d): ", NUM_WARDS);
     scanf("%d", &assignedWards[id]);
     assignedWards[id] -= 1;
 
@@ -204,7 +208,7 @@ void displayAnalytics() {
     }
 
     printHeader("HOSPITAL ANALYTICS SUMMARY");
-    int specialtyCounts[4] = {0};
+    int specialtyCounts[NUM_SPECIALTIES] = {0};
     int totalWaitTime = 0;
 
     for (int i = 0; i < patientCount; i++) {
@@ -216,12 +220,12 @@ void displayAnalytics() {
     printf("Total Patients Registered: %d\n", patientCount);
     printf("Total Estimated Waiting Time: %d mins\n\n", totalWaitTime);
     printf("Patient Volume by Specialty:\n");
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_SPECIALTIES; i++) {
         printf("- %s: %d patients\n", SPECIALTIES[i], specialtyCounts[i]);
     }
 }
 
-// System Status Overview (New Feature)
+// System Status Overview
 void displaySystemStatus() {
     printHeader("SYSTEM OVERVIEW REPORT");
     printf("Total Registered Patients : %d\n", patientCount);
