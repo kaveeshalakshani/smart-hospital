@@ -14,6 +14,8 @@ char patientNames[100][50];
 int patientAges[100];
 int urgencyLevels[100];
 int selectedSpecialties[100];
+int assignedWards[100];      // Requirement 6: -1 means not assigned, 0-3 for Wards
+int stayDays[100];           // Requirement 6: Number of days stayed
 int patientCount = 0;
 
 // Requirement 2: Patient Registration
@@ -29,11 +31,45 @@ void registerPatient() {
     printf("Select Specialty (1-OPD, 2-Paediatrics, 3-Cardiology, 4-Neurology): ");
     scanf("%d", &selectedSpecialties[patientCount]);
 
+    assignedWards[patientCount] = -1; // Initialize as no ward assigned
+    stayDays[patientCount] = 0;
+
     printf("\nPatient %s Registered Successfully!\n", patientNames[patientCount]);
     patientCount++;
 }
 
-// Requirement 3: Billing & Discount Engine
+// Requirement 6: Ward Bed Allocation Engine
+void allocateWard() {
+    if (patientCount == 0) {
+        printf("\nNo patients registered yet!\n");
+        return;
+    }
+
+    int id;
+    printf("\nEnter Patient ID (0 to %d): ", patientCount - 1);
+    scanf("%d", &id);
+
+    if (id < 0 || id >= patientCount) {
+        printf("Invalid Patient ID!\n");
+        return;
+    }
+
+    printf("\nSelect Ward Category:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("%d. %s (LKR %.2f/day)\n", i + 1, WARDS[i], WARD_RATES[i]);
+    }
+    printf("Enter Ward Choice: ");
+    scanf("%d", &assignedWards[id]);
+    assignedWards[id] -= 1; // Convert to 0-indexed
+
+    printf("Enter Number of Days for Stay: ");
+    scanf("%d", &stayDays[id]);
+
+    printf("\nWard %s allocated to Patient %s for %d days.\n",
+           WARDS[assignedWards[id]], patientNames[id], stayDays[id]);
+}
+
+// Requirement 3 & 6: Billing & Discount Engine (Updated with Ward Charges)
 void generateBill() {
     if (patientCount == 0) {
         printf("\nNo patients registered yet!\n");
@@ -59,14 +95,31 @@ void generateBill() {
         discount = baseFee * 0.10;
     }
 
-    float finalFee = baseFee - discount;
+    float finalConsultationFee = baseFee - discount;
+    float wardFee = 0.0;
 
-    printf("\n--- INVOICE ---\n");
-    printf("Patient Name: %s\n", patientNames[id]);
+    if (assignedWards[id] != -1) {
+        wardFee = WARD_RATES[assignedWards[id]] * stayDays[id];
+    }
+
+    float totalBill = finalConsultationFee + wardFee;
+
+    printf("\n--- FINAL INVOICE ---\n");
+    printf("Patient Name: %s | Age: %d\n", patientNames[id], patientAges[id]);
     printf("Specialty: %s\n", SPECIALTIES[specIdx]);
     printf("Base Consultation Fee: LKR %.2f\n", baseFee);
     printf("Discount Applied: LKR %.2f\n", discount);
-    printf("Final Payable Amount: LKR %.2f\n", finalFee);
+    printf("Net Consultation Fee: LKR %.2f\n", finalConsultationFee);
+
+    if (assignedWards[id] != -1) {
+        printf("Ward: %s (%d days @ LKR %.2f/day): LKR %.2f\n",
+               WARDS[assignedWards[id]], stayDays[id], WARD_RATES[assignedWards[id]], wardFee);
+    } else {
+        printf("Ward Charges: None\n");
+    }
+
+    printf("------------------------------------\n");
+    printf("TOTAL PAYABLE AMOUNT: LKR %.2f\n", totalBill);
 }
 
 // Requirement 4: Emergency Triage Display
@@ -79,7 +132,6 @@ void displayTriageQueue() {
     printf("\n--- EMERGENCY TRIAGE QUEUE ---\n");
     printf("Level 3 (Critical) -> Level 2 (Urgent) -> Level 1 (Normal)\n\n");
 
-    // Display Critical Patients
     for (int level = 3; level >= 1; level--) {
         for (int i = 0; i < patientCount; i++) {
             if (urgencyLevels[i] == level) {
@@ -121,23 +173,26 @@ int main() {
     do {
         printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
         printf("1. Register New Patient\n");
-        printf("2. Generate Patient Bill\n");
-        printf("3. View Triage Queue\n");
-        printf("4. View Analytics Summary\n");
-        printf("5. Exit\n");
+        printf("2. Allocate Ward Bed\n");
+        printf("3. Generate Patient Bill\n");
+        printf("4. View Triage Queue\n");
+        printf("5. View Analytics Summary\n");
+        printf("6. Exit\n");
         printf("Enter Choice: ");
         scanf("%d", &choice);
 
         if (choice == 1) {
             registerPatient();
         } else if (choice == 2) {
-            generateBill();
+            allocateWard();
         } else if (choice == 3) {
-            displayTriageQueue();
+            generateBill();
         } else if (choice == 4) {
+            displayTriageQueue();
+        } else if (choice == 5) {
             displayAnalytics();
         }
-    } while(choice != 5);
+    } while(choice != 6);
 
     return 0;
 }
