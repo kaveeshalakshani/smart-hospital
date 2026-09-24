@@ -4,6 +4,7 @@
 #define MAX_PATIENTS 100
 #define NUM_SPECIALTIES 4
 #define NUM_WARDS 4
+#define MAX_FEEDBACKS 50
 
 // Global System Configuration Constants
 const char SPECIALTIES[NUM_SPECIALTIES][30] = {"General Practice", "Paediatrics", "Cardiology", "Neurology"};
@@ -21,6 +22,11 @@ int selectedSpecialties[MAX_PATIENTS];
 int assignedWards[MAX_PATIENTS];
 int stayDays[MAX_PATIENTS];
 int patientCount = 0;
+
+// Feedback Data Storage Arrays
+char feedbacks[MAX_FEEDBACKS][100];
+int feedbackRatings[MAX_FEEDBACKS];
+int feedbackCount = 0;
 
 // Helper function to clear standard input stream
 void clearBuffer() {
@@ -247,13 +253,34 @@ void displaySystemStatus() {
     printf("Critical Priority Cases  : %d\n", criticalCount);
 }
 
-// Emergency & Support Contact Information (New Feature)
+// Emergency & Support Contact Information
 void displayContactInfo() {
     printHeader("HOSPITAL HELPLINE & EMERGENCY CONTACTS");
     printf("Emergency Hot-line : 1990 (24/7 Service)\n");
     printf("Hospital Reception : +94 11 2345678\n");
     printf("Ambulance Support  : +94 11 8765432\n");
     printf("Email Query Desk   : help@smarthospital.lk\n");
+}
+
+// Patient Feedback Collection Module (New Feature)
+void collectFeedback() {
+    if (feedbackCount >= MAX_FEEDBACKS) {
+        printf("\n[INFO] Feedback storage capacity full!\n");
+        return;
+    }
+
+    printHeader("PATIENT FEEDBACK & RATING");
+    printf("Enter Star Rating (1 to 5): ");
+    while (scanf("%d", &feedbackRatings[feedbackCount]) != 1 || feedbackRatings[feedbackCount] < 1 || feedbackRatings[feedbackCount] > 5) {
+        printf("Invalid rating! Enter between 1 and 5: ");
+        clearBuffer();
+    }
+
+    printf("Enter Brief Feedback Remark: ");
+    scanf(" %[^\n]s", feedbacks[feedbackCount]);
+
+    printf("\n[THANK YOU] Feedback submitted successfully!\n");
+    feedbackCount++;
 }
 
 // System Entry point
@@ -269,7 +296,8 @@ int main() {
         printf("6. View Analytics Summary\n");
         printf("7. System Status Overview\n");
         printf("8. Emergency & Help Contacts\n");
-        printf("9. Exit\n");
+        printf("9. Submit Patient Feedback\n");
+        printf("10. Exit\n");
         printf("Enter Choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("[ERROR] Invalid input! Exiting program.\n");
@@ -284,8 +312,9 @@ int main() {
         else if (choice == 6) displayAnalytics();
         else if (choice == 7) displaySystemStatus();
         else if (choice == 8) displayContactInfo();
+        else if (choice == 9) collectFeedback();
 
-    } while(choice != 9);
+    } while(choice != 10);
 
     printf("\nExiting System. Thank you!\n");
     return 0;
