@@ -53,12 +53,9 @@ void generateBill() {
     float baseFee = BASE_FEES[specIdx];
     float discount = 0.0;
 
-    // Senior Citizen Discount (>= 60 years -> 15%)
     if (patientAges[id] >= 60) {
         discount = baseFee * 0.15;
-    }
-    // Child Discount (<= 12 years -> 10%)
-    else if (patientAges[id] <= 12) {
+    } else if (patientAges[id] <= 12) {
         discount = baseFee * 0.10;
     }
 
@@ -72,13 +69,62 @@ void generateBill() {
     printf("Final Payable Amount: LKR %.2f\n", finalFee);
 }
 
+// Requirement 4: Emergency Triage Display
+void displayTriageQueue() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the queue!\n");
+        return;
+    }
+
+    printf("\n--- EMERGENCY TRIAGE QUEUE ---\n");
+    printf("Level 3 (Critical) -> Level 2 (Urgent) -> Level 1 (Normal)\n\n");
+
+    // Display Critical Patients
+    for (int level = 3; level >= 1; level--) {
+        for (int i = 0; i < patientCount; i++) {
+            if (urgencyLevels[i] == level) {
+                printf("[%s] ID: %d | Name: %s | Age: %d | Specialty: %s\n",
+                    (level == 3 ? "CRITICAL" : (level == 2 ? "URGENT" : "NORMAL")),
+                    i, patientNames[i], patientAges[i], SPECIALTIES[selectedSpecialties[i] - 1]);
+            }
+        }
+    }
+}
+
+// Requirement 5: Hospital Analytics
+void displayAnalytics() {
+    if (patientCount == 0) {
+        printf("\nNo data available for analytics!\n");
+        return;
+    }
+
+    int specialtyCounts[4] = {0};
+    int totalWaitTime = 0;
+
+    for (int i = 0; i < patientCount; i++) {
+        int specIdx = selectedSpecialties[i] - 1;
+        specialtyCounts[specIdx]++;
+        totalWaitTime += AVG_TIMES[specIdx];
+    }
+
+    printf("\n--- HOSPITAL ANALYTICS SUMMARY ---\n");
+    printf("Total Patients Registered: %d\n", patientCount);
+    printf("Total Estimated Waiting Time: %d mins\n\n", totalWaitTime);
+    printf("Patient Volume by Specialty:\n");
+    for (int i = 0; i < 4; i++) {
+        printf("- %s: %d patients\n", SPECIALTIES[i], specialtyCounts[i]);
+    }
+}
+
 int main() {
     int choice;
     do {
         printf("\n=== SMART HOSPITAL MANAGEMENT SYSTEM ===\n");
         printf("1. Register New Patient\n");
         printf("2. Generate Patient Bill\n");
-        printf("3. Exit\n");
+        printf("3. View Triage Queue\n");
+        printf("4. View Analytics Summary\n");
+        printf("5. Exit\n");
         printf("Enter Choice: ");
         scanf("%d", &choice);
 
@@ -86,8 +132,12 @@ int main() {
             registerPatient();
         } else if (choice == 2) {
             generateBill();
+        } else if (choice == 3) {
+            displayTriageQueue();
+        } else if (choice == 4) {
+            displayAnalytics();
         }
-    } while(choice != 3);
+    } while(choice != 5);
 
     return 0;
 }
